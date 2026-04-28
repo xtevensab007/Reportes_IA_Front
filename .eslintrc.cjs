@@ -13,6 +13,7 @@ module.exports = {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',
-    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    /*'no-console': ['warn', { allow: ['warn', 'error'] }],*/
+    'no-console': 'off',
   },
 }

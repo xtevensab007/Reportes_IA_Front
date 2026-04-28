@@ -58,7 +58,7 @@ const reportService = {
   ): Promise<{ uploadId: string; fileName: string }> {
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('type', type)
+    formData.append('type', type.toUpperCase())
 
     const { data } = await api.post<ApiResponse<{ uploadId: string; fileName: string }>>(
       '/uploads',

@@ -13,7 +13,7 @@ const OAuthCallbackPage: React.FC = () => {
   const { provider } = useParams<{ provider: 'google' | 'github' }>()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { login } = useAuth()
+  //const { login } = useAuth()
   const called = useRef(false)
 
   useEffect(() => {

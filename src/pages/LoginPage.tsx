@@ -35,6 +35,8 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    e.stopPropagation()
+    console.log('enviando:', email, password)
     if (!email || !password) { toast.error('Completa todos los campos'); return }
     setSubmitting(true)
     try {
@@ -42,12 +44,14 @@ const LoginPage: React.FC = () => {
       toast.success('¡Bienvenido!')
       navigate(from, { replace: true })
     } catch (err: unknown) {
-      toast.error((err as { message?: string })?.message || 'Credenciales inválidas')
-    } finally {
+  console.log('error completo:', JSON.stringify(err))
+  console.log('error mensaje:', (err as { message?: string })?.message)
+  toast.error((err as { message?: string })?.message || 'Credenciales inválidas')
+} finally {
       setSubmitting(false)
     }
   }
-
+  console.log('isLoading:', isLoading, 'isAuthenticated:', isAuthenticated)
   return (
     <div
       style={{
@@ -94,7 +98,7 @@ const LoginPage: React.FC = () => {
         </div>
 
         {/* OAuth buttons */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.25rem' }}>
+        {/*<div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.25rem' }}>
           <button
             className="btn btn-secondary"
             style={{ justifyContent: 'center', width: '100%' }}
@@ -113,10 +117,10 @@ const LoginPage: React.FC = () => {
 
         <div className="divider" style={{ marginBottom: '1.25rem' }}>
           o con email
-        </div>
+        </div>*/}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <form onSubmit={handleSubmit} method="post" action="#" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div className="form-group">
             <label className="form-label">Correo electrónico</label>
             <input

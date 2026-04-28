@@ -9,7 +9,7 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
-  server: {
+  /*server: {
     port: 3000,
     proxy: {
       '/api': {
@@ -18,5 +18,15 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
+  },*/
+  server: {
+  port: 5173,
+  proxy: {
+    '/api': {
+      target: 'https://autoreport-ia.onrender.com',
+      changeOrigin: true,
+      rewrite: (path) => path.replace(/^\/api/, ''),
+    },
   },
+},
 })

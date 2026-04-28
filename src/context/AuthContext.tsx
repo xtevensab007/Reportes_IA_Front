@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [state, dispatch] = useReducer(authReducer, initialState)
 
   // Restaurar sesión al montar
- /* useEffect(() => {
+  useEffect(() => {
     const restore = async () => {
       const tokens = getStoredTokens()
       const rawUser = localStorage.getItem('reportai_user')
@@ -76,7 +76,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     restore()
   }, [])
-*/
+
+/*
 useEffect(() => {
   // MOCK temporal — quitar cuando el backend esté listo
   dispatch({
@@ -97,10 +98,11 @@ useEffect(() => {
     },
   })
 }, [])
+*/
   const login = useCallback(async (email: string, password: string) => {
-    const { user, tokens } = await authService.login({ email, password })
-    dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens } })
-  }, [])
+  const { user, tokens } = await authService.login({ email, password })
+  dispatch({ type: 'LOGIN_SUCCESS', payload: { user, tokens } })
+}, [])
 
   const loginWithGoogle = useCallback(() => authService.loginWithGoogle(), [])
   const loginWithGithub = useCallback(() => authService.loginWithGithub(), [])

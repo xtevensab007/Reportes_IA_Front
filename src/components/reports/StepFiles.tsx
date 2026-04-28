@@ -16,7 +16,7 @@ const StepFiles: React.FC = () => {
   const handlePdf = (f: UploadedFile) => setPdf(f)
   const handleExcel = (f: UploadedFile) => setExcel(f)
 
-  /*const handleContinue = async () => {
+  const handleContinue = async () => {
     if (!uploadedPdf || !uploadedExcel) {
       toast.error('Debes subir ambos archivos (PDF y Excel)')
       return
@@ -51,8 +51,8 @@ const StepFiles: React.FC = () => {
       setUploading(false)
     }
   }
-*/
-const handleContinue = async () => {
+
+/*const handleContinue = async () => {
   if (!uploadedPdf || !uploadedExcel) {
     toast.error('Debes subir ambos archivos (PDF y Excel)')
     return
@@ -63,7 +63,7 @@ const handleContinue = async () => {
   setExcel({ ...uploadedExcel, status: 'done', progress: 100, uploadId: 'mock-excel-id' })
   toast.success('Archivos cargados correctamente')
   setStep('configurator')
-}
+}*/
   const canContinue = !!uploadedPdf && !!uploadedExcel
 
   return (

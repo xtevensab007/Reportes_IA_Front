@@ -16,7 +16,6 @@ export interface LoginResponse {
 }
 
 const authService = {
-  // Login con email / password
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     const { data } = await api.post<ApiResponse<LoginResponse>>('/auth/login', credentials)
     storeTokens(data.data.tokens)
@@ -24,7 +23,6 @@ const authService = {
     return data.data
   },
 
-  // Redirige al proveedor OAuth
   loginWithGoogle(): void {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
     const redirectUri = `${window.location.origin}/auth/callback/google`
@@ -49,7 +47,6 @@ const authService = {
     window.location.href = url
   },
 
-  // Intercambia el code OAuth por tokens (lo procesa el backend)
   async handleOAuthCallback(provider: 'google' | 'github', code: string): Promise<LoginResponse> {
     const { data } = await api.post<ApiResponse<LoginResponse>>(`/auth/oauth/${provider}`, {
       code,
@@ -60,16 +57,15 @@ const authService = {
     return data.data
   },
 
-  // Obtiene perfil actual
   async getProfile(): Promise<User> {
     const { data } = await api.get<ApiResponse<User>>('/auth/me')
     return data.data
   },
 
-  // Logout
   async logout(): Promise<void> {
+    const tokens = JSON.parse(localStorage.getItem('reportai_tokens') || '{}')
     try {
-      await api.post('/auth/logout')
+      await api.post('/auth/logout', { refreshToken: tokens.refreshToken })
     } finally {
       clearTokens()
     }
