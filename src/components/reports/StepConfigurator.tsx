@@ -106,7 +106,7 @@ const StepConfigurator: React.FC = () => {
     }
   }
 
- /* const handleProcess = async () => {
+ const handleProcess = async () => {
     if (!uploadedPdf?.uploadId || !uploadedExcel?.uploadId) {
       toast.error('Archivos no disponibles'); return
     }
@@ -166,8 +166,8 @@ const StepConfigurator: React.FC = () => {
       setProcessing(false)
     }
   }
-*/
-const handleProcess = async () => {
+
+/*const handleProcess = async () => {
   if (!reportName.trim()) { toast.error('Ingresa un nombre para el reporte'); return }
 
   // MOCK temporal — quitar cuando el backend esté listo
@@ -177,7 +177,7 @@ const handleProcess = async () => {
   toast.success('¡Extracción completada!')
   setStep('review')
   setProcessing(false)
-}
+}*/
   return (
     <div className="fade-in">
       <div style={{ marginBottom: '1.5rem' }}>

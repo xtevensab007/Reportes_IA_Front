@@ -70,6 +70,11 @@ const authService = {
       clearTokens()
     }
   },
+  async register(credentials: { name: string; email: string; password: string }): Promise<LoginResponse> {
+  const { data } = await api.post<ApiResponse<LoginResponse>>('/auth/register', credentials)
+  return data.data
+},
+
 }
 
 export default authService

@@ -49,7 +49,7 @@ useEffect(() => {
 
 
 
- /* const handleGenerate = async () => {
+  const handleGenerate = async () => {
     if (!reportId) return
     const pending = extractedData.filter((f) => f.needsReview)
     if (pending.length > 0) {
@@ -66,15 +66,15 @@ useEffect(() => {
       setGenerating(false)
     }
   }
-*/
-const handleGenerate = async () => {
+
+/*const handleGenerate = async () => {
   // MOCK temporal — quitar cuando el backend esté listo
   setGenerating(true)
   await new Promise((res) => setTimeout(res, 1200))
   toast.success('¡PDF generado correctamente!')
   setStep('export')
   setGenerating(false)
-}
+}*/
   const needsReviewCount = extractedData.filter((f) => f.needsReview).length
   const pdfFields = extractedData.filter((f) => f.source === 'pdf')
   const excelFields = extractedData.filter((f) => f.source === 'excel')

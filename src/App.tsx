@@ -20,6 +20,7 @@ const ConfiguratorsPage       = lazy(() => import('@/pages/ConfiguratorsPage'))
 const ConfiguratorFormPage    = lazy(() => import('@/pages/ConfiguratorFormPage'))
 const SettingsPage            = lazy(() => import('@/pages/SettingsPage'))
 const NotFoundPage            = lazy(() => import('@/pages/NotFoundPage'))
+const RegisterPage = lazy(() => import('@/pages/RegisterPage'))
 
 const Fallback = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: 12 }}>
@@ -49,6 +50,7 @@ const App: React.FC = () => (
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/auth/callback/:provider" element={<OAuthCallbackPage />} />
+          <Route path="/register"                 element={<RegisterPage />} />
 
           {/* Protected routes inside layout */}
           <Route
@@ -67,6 +69,7 @@ const App: React.FC = () => (
             <Route path="/configurators/new"        element={<ConfiguratorFormPage />} />
             <Route path="/configurators/:id/edit"   element={<ConfiguratorFormPage />} />
             <Route path="/settings"                 element={<SettingsPage />} />
+            
           </Route>
 
           {/* Catch-all */}

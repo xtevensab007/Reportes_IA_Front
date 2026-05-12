@@ -173,7 +173,21 @@ const LoginPage: React.FC = () => {
         <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--color-text-3)', marginTop: '1.25rem' }}>
           Al ingresar aceptas los términos de uso y política de privacidad
         </p>
+        <p style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--color-text-2)', marginTop: '1rem' }}>
+         ¿No tienes cuenta?{' '}
+        <span
+          role="button"
+          tabIndex={0}
+          style={{ color: 'var(--color-blue)', fontWeight: 500, cursor: 'pointer' }}
+           onClick={() => navigate('/register')}
+           >
+          Regístrate
+          </span>
+        </p>
+
       </div>
+          
+      
     </div>
   )
 }

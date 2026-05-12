@@ -15,7 +15,7 @@ const StepExport: React.FC = () => {
   const { reportId, reportName, reset, setStep } = useWizard()
   const [downloading, setDownloading] = useState(false)
 
- /* const handleDownload = async () => {
+  const handleDownload = async () => {
     if (!reportId) return
     setDownloading(true)
     try {
@@ -28,14 +28,14 @@ const StepExport: React.FC = () => {
       setDownloading(false)
     }
   }
-*/
-const handleDownload = async () => {
+
+/*const handleDownload = async () => {
   // MOCK temporal — quitar cuando el backend esté listo
   setDownloading(true)
   await new Promise((res) => setTimeout(res, 800))
   toast.success('En producción aquí se descargará el PDF real')
   setDownloading(false)
-}
+}*/
   const handleNewReport = () => {
     reset()
     navigate('/reports/new')
