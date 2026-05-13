@@ -54,7 +54,7 @@ export interface ExtractedField {
 
 // ---- Configuradores ----
 
-export type FieldType = 'text' | 'number' | 'date' | 'boolean'
+export type FieldType = 'TEXT' | 'NUMBER' | 'DATE' | 'CURRENCY'
 
 export interface PdfField {
   id: string
@@ -67,11 +67,11 @@ export interface PdfField {
 
 export interface ExcelColumn {
   id: string
-  name: string
-  columnLetter: string
-  sheetName: string
+  label: string        // era: name
+  column: string       // era: columnLetter
+  sheet: string        // era: sheetName
   startRow: number
-  included: boolean
+  active: boolean      // era: included
 }
 
 export interface Configurator {

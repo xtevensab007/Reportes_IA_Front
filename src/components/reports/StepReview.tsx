@@ -15,7 +15,7 @@ const StepReview: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
 
-  /*useEffect(() => {
+  useEffect(() => {
     if (!reportId || extractedData.length > 0) return
     setLoading(true)
     reportService.getById(reportId)
@@ -23,19 +23,8 @@ const StepReview: React.FC = () => {
       .catch(() => toast.error('Error al cargar datos extraídos'))
       .finally(() => setLoading(false))
   }, [reportId])
-*/
-useEffect(() => {
-  if (extractedData.length > 0) return
 
-  // MOCK temporal — quitar cuando el backend esté listo
-  setExtractedData([
-    { fieldName: 'Nombre proveedor', source: 'pdf',   value: 'Suministros Andinos S.A.S', confidence: 95, needsReview: false },
-    { fieldName: 'Monto total',      source: 'pdf',   value: '$ 4.850.000',               confidence: 72, needsReview: true  },
-    { fieldName: 'Fecha emisión',    source: 'pdf',   value: '15/03/2025',                confidence: 98, needsReview: false },
-    { fieldName: 'NIT',              source: 'excel', value: '900.123.456-7',             confidence: undefined, needsReview: false },
-    { fieldName: 'Presupuesto',      source: 'excel', value: '$ 5.200.000',               confidence: undefined, needsReview: false },
-  ])
-}, [reportId])
+
 
   const handleFieldChange = async (fieldName: string, value: string) => {
     updateField(fieldName, value)

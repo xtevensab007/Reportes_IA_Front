@@ -11,16 +11,16 @@ import reportService from '@/services/reportService'
 import type { Configurator, PdfField, ExcelColumn, FieldType } from '@/types'
 
 const FIELD_TYPES: { value: FieldType; label: string }[] = [
-  { value: 'text',    label: 'Texto' },
-  { value: 'number',  label: 'Número' },
-  { value: 'date',    label: 'Fecha' },
-  { value: 'boolean', label: 'Booleano' },
+  { value: 'TEXT',     label: 'Texto' },
+  { value: 'NUMBER',   label: 'Número' },
+  { value: 'DATE',     label: 'Fecha' },
+  { value: 'CURRENCY', label: 'Moneda' },
 ]
 
 const emptyPdfField = (): PdfField => ({
   id: crypto.randomUUID(),
   name: '',
-  type: 'text',
+  type: 'TEXT',
   instruction: '',
   minConfidence: 80,
   required: true,
@@ -28,11 +28,11 @@ const emptyPdfField = (): PdfField => ({
 
 const emptyExcelCol = (): ExcelColumn => ({
   id: crypto.randomUUID(),
-  name: '',
-  columnLetter: '',
-  sheetName: 'Hoja1',
-  startRow: 2,
-  included: true,
+  label: '',
+  column: '',
+  sheet: 'Hoja1',
+  startRow: 1,
+  active: true,
 })
 
 const StepConfigurator: React.FC = () => {
@@ -110,10 +110,13 @@ const StepConfigurator: React.FC = () => {
     if (!uploadedPdf?.uploadId || !uploadedExcel?.uploadId) {
       toast.error('Archivos no disponibles'); return
     }
-    if (pdfFields.some((f) => !f.name || !f.instruction)) {
-      toast.error('Completa todos los campos del PDF'); return
+    if (pdfFields.length === 0) {
+    toast.error('Debes definir al menos un campo a extraer'); return
     }
-    if (excelCols.some((c) => c.included && (!c.name || !c.columnLetter))) {
+    if (pdfFields.some((f) => !f.name.trim() || !f.instruction.trim())) {
+    toast.error('Completa el nombre e instrucción de todos los campos PDF'); return
+    }
+    if (excelCols.some((c) => c.active && (!c.label || !c.column))) {
       toast.error('Completa las columnas de Excel incluidas'); return
     }
     if (!reportName.trim()) { toast.error('Ingresa un nombre para el reporte'); return }
@@ -123,19 +126,28 @@ const StepConfigurator: React.FC = () => {
       // Save config if no template selected
       let cfgId = selectedConfiguratorId
       if (!cfgId) {
-        const saved = await configuratorService.create({
-          name: configName || `Config ${new Date().toLocaleDateString()}`,
-          pdfFields,
-          excelColumns: excelCols,
-          includePortada: true,
-          includeDataTable: true,
-          includeOriginalPages: true,
-          includeAiSummary: false,
-          outputFormat: 'A4_vertical',
-        })
-        cfgId = saved.id
-        setConfigurator(cfgId)
-      }
+  // 1. Crear configurador con solo el nombre
+  const saved = await configuratorService.create({
+    name: configName || `Config ${new Date().toLocaleDateString()}`,
+    pdfFields,
+    excelColumns: excelCols,
+    includePortada: true,
+    includeDataTable: true,
+    includeOriginalPages: true,
+    includeAiSummary: false,
+    outputFormat: 'A4_vertical',
+  })
+  cfgId = saved.id
+
+  // 2. Actualizar con los campos PDF y columnas Excel
+  await configuratorService.update(cfgId, {
+    name: configName || `Config ${new Date().toLocaleDateString()}`,
+    pdfFields,
+    excelColumns: excelCols,
+  })
+
+  setConfigurator(cfgId)
+}
 
       const report = await reportService.create({
         name: reportName,
@@ -318,54 +330,54 @@ const StepConfigurator: React.FC = () => {
               <div
                 key={col.id}
                 style={{
-                  background: col.included ? 'var(--color-green-light)' : 'var(--color-surface-2)',
-                  border: `0.5px solid ${col.included ? 'var(--color-green-mid)' : 'var(--color-border)'}`,
+                  background: col.active ? 'var(--color-green-light)' : 'var(--color-surface-2)',
+                  border: `0.5px solid ${col.active ? 'var(--color-green-mid)' : 'var(--color-border)'}`,
                   borderRadius: 'var(--radius-md)',
                   padding: '10px 12px',
-                  opacity: col.included ? 1 : 0.65,
+                  opacity: col.active ? 1 : 0.65,
                 }}
               >
                 <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
                   <input
-                    className="form-input"
-                    placeholder="Nombre del campo"
-                    value={col.name}
-                    onChange={(e) => updateExcelCol(col.id, { name: e.target.value })}
-                    style={{ flex: 1, fontSize: '0.8125rem', padding: '6px 10px' }}
-                  />
-                  <input
-                    className="form-input"
-                    placeholder="Col (A, B…)"
-                    value={col.columnLetter}
-                    onChange={(e) => updateExcelCol(col.id, { columnLetter: e.target.value.toUpperCase() })}
-                    style={{ width: 72, fontSize: '0.8125rem', padding: '6px 10px', textAlign: 'center' }}
-                  />
-                  {excelCols.length > 1 && (
-                    <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-red)' }} onClick={() => removeExcelCol(col.id)}>
-                      <Trash2 size={13} />
-                    </button>
-                  )}
-                </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <input
-                    className="form-input"
-                    placeholder="Nombre hoja"
-                    value={col.sheetName}
-                    onChange={(e) => updateExcelCol(col.id, { sheetName: e.target.value })}
-                    style={{ flex: 1, fontSize: '0.8125rem', padding: '6px 10px' }}
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    value={col.startRow}
-                    onChange={(e) => updateExcelCol(col.id, { startRow: Number(e.target.value) })}
-                    placeholder="Fila inicio"
-                    style={{ width: 80, fontSize: '0.8125rem', padding: '6px 10px', border: '0.5px solid var(--color-border-md)', borderRadius: 'var(--radius-sm)' }}
-                  />
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--color-green)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                    <input type="checkbox" checked={col.included} onChange={(e) => updateExcelCol(col.id, { included: e.target.checked })} />
-                    Incluir
-                  </label>
+  className="form-input"
+  placeholder="Nombre del campo"
+  value={col.label}
+  onChange={(e) => updateExcelCol(col.id, { label: e.target.value })}
+  style={{ flex: 1, fontSize: '0.8125rem', padding: '6px 10px' }}
+/>
+<input
+  className="form-input"
+  placeholder="Col (A, B…)"
+  value={col.column}
+  onChange={(e) => updateExcelCol(col.id, { column: e.target.value.toUpperCase() })}
+  style={{ width: 72, fontSize: '0.8125rem', padding: '6px 10px', textAlign: 'center' }}
+/>
+{excelCols.length > 1 && (
+  <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-red)' }} onClick={() => removeExcelCol(col.id)}>
+    <Trash2 size={13} />
+  </button>
+)}
+</div>
+<div style={{ display: 'flex', gap: 8 }}>
+  <input
+    className="form-input"
+    placeholder="Nombre hoja"
+    value={col.sheet}
+    onChange={(e) => updateExcelCol(col.id, { sheet: e.target.value })}
+    style={{ flex: 1, fontSize: '0.8125rem', padding: '6px 10px' }}
+  />
+  <input
+    type="number"
+    min={1}
+    value={col.startRow}
+    onChange={(e) => updateExcelCol(col.id, { startRow: Number(e.target.value) })}
+    placeholder="Fila inicio"
+    style={{ width: 80, fontSize: '0.8125rem', padding: '6px 10px', border: '0.5px solid var(--color-border-md)', borderRadius: 'var(--radius-sm)' }}
+  />
+  <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.75rem', color: 'var(--color-green)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+    <input type="checkbox" checked={col.active} onChange={(e) => updateExcelCol(col.id, { active: e.target.checked })} />
+    Incluir
+  </label>
                 </div>
               </div>
             ))}

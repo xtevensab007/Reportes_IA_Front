@@ -32,17 +32,61 @@ const reportService = {
 
   // Listar reportes paginados
   async list(page = 1, pageSize = 10): Promise<PaginatedResponse<Report>> {
-    const { data } = await api.get<ApiResponse<PaginatedResponse<Report>>>('/reports', {
-      params: { page, pageSize },
-    })
-    return data.data
-  },
+  const { data } = await api.get<ApiResponse<PaginatedResponse<Report>>>('/reports', {
+    params: { page, pageSize },
+  })
+  const statusMap: Record<string, string> = {
+    'PENDING':    'pending',
+    'UPLOADING':  'processing',
+    'PROCESSING': 'processing',
+    'REVIEWING':  'completed',
+    'GENERATING': 'processing',
+    'COMPLETED':  'completed',
+    'ERROR':      'error',
+  }
+  data.data.data = data.data.data.map((r) => ({
+    ...r,
+    status: (statusMap[r.status] || r.status) as Report['status'],
+  }))
+  return data.data
+},
 
   // Obtener reporte por ID
   async getById(id: string): Promise<Report> {
-    const { data } = await api.get<ApiResponse<Report>>(`/reports/${id}`)
-    return data.data
-  },
+  const { data } = await api.get<ApiResponse<Report>>(`/reports/${id}`)
+  const r = data.data as Report & { extractedFields?: Array<{
+    fieldName: string
+    value: string
+    source: string
+    status: string
+    confidence: number
+  }> }
+
+  // Mapear extractedFields → extractedData
+  if (r.extractedFields) {
+    r.extractedData = r.extractedFields.map((f) => ({
+      fieldName: f.fieldName,
+      value: f.value,
+      source: f.source.toLowerCase() as 'pdf' | 'excel',
+      confidence: f.confidence,
+      needsReview: f.status === 'REVIEW',
+    }))
+  }
+
+  // Normalizar status
+  const statusMap: Record<string, string> = {
+    'PENDING':    'pending',
+    'UPLOADING':  'processing',
+    'PROCESSING': 'processing',
+    'REVIEWING':  'completed',
+    'GENERATING': 'processing',
+    'COMPLETED':  'completed',
+    'ERROR':      'error',
+  }
+  r.status = (statusMap[r.status] || r.status) as Report['status']
+
+  return r
+},
 
   // Crear reporte (inicia el procesamiento en el backend)
   async create(payload: CreateReportPayload): Promise<Report> {
